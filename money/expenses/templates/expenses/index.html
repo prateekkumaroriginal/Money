@@ -2,4 +2,38 @@
 
 {% block content %}
 <h1>This is Index Page</h1>
+<form class="shadow-lg m-10 rounded-lg" method="post">
+    {% csrf_token %}
+    <div class="form-container pt-4 pb-8 px-10 flex items-center justify-center gap-10">
+        {% for field in expense_form %}
+        <div class="relative">
+            <div>
+                <div class="mb-1">
+                    <label class="text-lg text-gray-500 font-bold" for="id_{{field.name}}">{{field.name | title}}</label>
+                </div>
+                <div class="border-2 border-zinc-400 focus:outline-none xl:w-80">
+                    {{field}}
+                </div>
+            </div>
+            <div class="absolute top-16 px-1 py-1 text-sm font-semibold text-red-600">
+                {{field.errors}}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="pt-8">
+            <button class="bg-green-500 hover:bg-green-600 px-5 py-2 rounded text-white font-bold">Add</button>
+        </div>
+    </div>
+</form>
+
+<div class="container">
+    {% for expense in expenses %}
+        <div>
+            {{expense}} --> {{expense.amount}}
+        </div>
+    {% empty %}
+        <h1>Add expenses to show here...</h1>
+    {% endfor %}
+</div>
 {% endblock content %}
