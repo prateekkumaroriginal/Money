@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>This is Index Page</h1>
+<h1 class="text-4xl mt-10 text-center">Best Place To Keep Track Of Your Money!</h1>
 <form class="shadow-lg m-10 rounded-lg" method="post">
     {% csrf_token %}
     <div class="form-container pt-4 pb-8 px-10 flex items-center justify-center gap-10">
@@ -27,13 +27,34 @@
     </div>
 </form>
 
-<div class="container">
-    {% for expense in expenses %}
-        <div>
-            {{expense}} --> {{expense.amount}}
+<div class="container px-10 my-5 rounded-lg">
+    <h1 class="text-4xl mt-10 text-center">Expenses</h1>
+    <div class="shadow-lg p-5">
+        {% if expenses %}
+        <div class="expense-header text-xl flex flex-wrap space-x-40">
+            <span>Name</span>
+            <span>Amount</span>
+            <span>Category</span>
+            <span>Date</span>
+            <span>Edit</span>
+            <span>Delete</span>
         </div>
-    {% empty %}
-        <h1>Add expenses to show here...</h1>
-    {% endfor %}
+        <hr class="m-8">
+        {% else %}
+        <h1 class="text-4xl text-center">Add Expenses to show here...</h1>
+        {% endif %}
+
+        {% for expense in expenses %}
+        <div class="expense-row flex flex-wrap px-20 py-5">
+            <span>{{expense.name}}</span>
+            <span>{{expense.amount}}</span>
+            <span>{{expense.category}}</span>
+            <span>{{expense.date}}</span>
+            <span><a href="{% url 'edit' expense.id %}">Edit</a></span>
+            <span><a href="">Delete</a></span>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
 {% endblock content %}

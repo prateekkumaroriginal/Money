@@ -8,7 +8,7 @@ input:not([type='checkbox']):not([type='file']) {
     border-radius: 0.25rem;
 }
 
-textarea{
+textarea {
     width: 100%;
     resize: vertical;
     min-height: 3rem;
@@ -18,6 +18,19 @@ textarea{
 
 }
 
-textarea:focus{
+textarea:focus {
     outline: none;
+}
+
+div.expense-header,
+div.expense-row {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+div.expense-header span,
+div.expense-row span {
+    display: table-cell;
+    text-align: center;
 }
