@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import View, ListView, DetailView, UpdateView
+from django.views.generic import View, ListView, DetailView, UpdateView, DeleteView
 from .forms import ExpenseForm
 from .models import Expense
 
@@ -27,4 +27,8 @@ class ExpenseUpdateView(UpdateView):
     model = Expense
     fields = ['name', 'amount', 'category']
     template_name_suffix = '_update_form'
+    success_url = reverse_lazy('index')
+
+class ExpenseDeleteView(DeleteView):
+    model = Expense
     success_url = reverse_lazy('index')
