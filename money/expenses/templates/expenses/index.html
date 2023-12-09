@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block content %}
-<h1 class="text-4xl mt-10 text-center">Best Place To Keep Track Of Your Money!</h1>
+<h1 class="text-4xl mt-10 text-center">Best Place To Keep Track Of Your Money! 💰</h1>
+<h2 class="font-bold text-gray-700 mt-10 px-10 -mb-10">Add Expense ➕</h2>
 <form class="shadow-lg m-10 rounded-lg" method="post">
     {% csrf_token %}
     <div class="form-container pt-4 pb-8 px-10 flex items-center justify-center gap-10">
@@ -27,11 +29,11 @@
     </div>
 </form>
 
-<div class="container px-10 my-5 rounded-lg">
-    <h1 class="text-4xl mt-10 text-center">Expenses</h1>
+<div class="container px-10 my-5">
+    <h1 class="text-4xl my-10 text-center">💵 Expenses 💵</h1>
     <div class="shadow-lg p-5">
         {% if expenses %}
-        <div class="expense-header text-xl flex flex-wrap space-x-40">
+        <div class="expense-header text-xl flex flex-wrap px-20 font-bold">
             <span>Name</span>
             <span>Amount</span>
             <span>Category</span>
@@ -39,27 +41,216 @@
             <span>Edit</span>
             <span>Delete</span>
         </div>
-        <hr class="m-8">
+        <hr class="mt-8">
         {% else %}
         <h1 class="text-4xl text-center">Add Expenses to show here...</h1>
         {% endif %}
 
         {% for expense in expenses %}
-        <div class="expense-row flex flex-wrap px-20 py-5">
+        <div class="expense-row flex flex-wrap px-20 py-5 hover:shadow-xl hover:border-t-2">
             <span>{{expense.name}}</span>
-            <span>{{expense.amount}}</span>
+            <span>₹ {{expense.amount | intcomma}}</span>
             <span>{{expense.category}}</span>
-            <span>{{expense.date}}</span>
-            <span><a href="{% url 'edit' expense.id %}">Edit</a></span>
+            <span>{{expense.date | date:"d M, Y"}}</span>
+            <span>
+                <div class="flex justify-center">
+                    <a class="flex justify-content p-1" href="{% url 'edit' expense.id %}">
+                        <svg class="stroke-indigo-800 stroke-2 w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                        </svg>
+                    </a>
+                </div>
+            </span>
             <span>
                 <form method="POST" action="{% url 'delete' expense.id %}">
                     {% csrf_token %}
-                    <button class="cursor-pointer" type="submit">Delete</button>
+                    <button class="cursor-pointer p-1" type="submit">
+                        <svg class="stroke-red-600 stroke-2 w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </button>
                 </form>
             </span>
         </div>
         {% endfor %}
+
+        <div class="px-60 mt-10">
+            <span class="mx-2 font-bold">Total: </span>
+            <span class="font-bold text-green-600 text-2xl">₹ {{total_expenses.amount__sum | intcomma}}</span>
+        </div>
     </div>
 </div>
+
+
+<h1 class="text-4xl mt-20 mb-5 text-center">📜 Totals 🧾</h1>
+<div class="container">
+    <div class="flex justify-center">
+        <div class="shadow-lg hover:shadow-2xl drop-shadow-2xl rounded-lg p-10 m-10 w-1/3">
+            <h2 class="font-bold text-gray-500">Last Year (365 days)</h2>
+            <h2 class="font-bold text-green-600 text-2xl">
+                ₹ {{yearly_sum.amount__sum | intcomma}}
+            </h2>
+        </div>
+
+        <div class="shadow-lg hover:shadow-2xl drop-shadow-2xl rounded-lg p-10 m-10 w-1/3">
+            <h2 class="font-bold text-gray-500">Last Month (30 days)</h2>
+            <h2 class="font-bold text-green-600 text-2xl">
+                ₹ {{weekly_sum.amount__sum | intcomma}}
+            </h2>
+        </div>
+
+        <div class="shadow-lg hover:shadow-2xl drop-shadow-2xl rounded-lg p-10 m-10 w-1/3">
+            <h2 class="font-bold text-gray-500">Last Week (7 days)</h2>
+            <h2 class="font-bold text-green-600 text-2xl">
+                ₹ {{monthly_sum.amount__sum | intcomma}}
+            </h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="flex justify-center">
+        <div class="shadow-lg hover:shadow-2xl drop-shadow-2xl rounded-lg p-10 m-10 w-1/3">
+            <h2 class="font-bold text-gray-500">This Year</h2>
+            <h2 class="font-bold text-green-600 text-2xl">
+                ₹ {{this_year_sum.amount__sum | intcomma}}
+            </h2>
+        </div>
+
+        <div class="shadow-lg hover:shadow-2xl drop-shadow-2xl rounded-lg p-10 m-10 w-1/3">
+            <h2 class="font-bold text-gray-500">This Month</h2>
+            <h2 class="font-bold text-green-600 text-2xl">
+                ₹ {{this_week_sum.amount__sum | intcomma}}
+            </h2>
+        </div>
+
+        <div class="shadow-lg hover:shadow-2xl drop-shadow-2xl rounded-lg p-10 m-10 w-1/3">
+            <h2 class="font-bold text-gray-500">This Week</h2>
+            <h2 class="font-bold text-green-600 text-2xl">
+                ₹ {{this_month_sum.amount__sum | intcomma}}
+            </h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="flex">
+        <div class="shadow-lg m-10 w-1/2 rounded-lg hover:shadow-2xl">
+            <div class="flex flex-wrap space-x-40 font-bold px-20 py-5">
+                <span>Past 30 days sum Expenses</span>
+            </div>
+            <hr>
+            <div id="30-days-table" class="grid grid-cols-2">
+                {% for daily_sum in daily_sums %}
+                <div class="flex flex-wrap px-20 py-5">
+                    <span>{{daily_sum.truncated_date | date:"d M, Y"}}</span>
+                </div>
+                <div class="flex flex-wrap py-5">
+                    <span class="font-bold text-green-600">₹ {{daily_sum.sum | intcomma}}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="shadow-lg m-10 w-1/2 rounded-lg hover:shadow-2xl">
+            <div class="flex flex-wrap space-x-40 font-bold px-20 py-5">
+                <span>Categorical Expenses</span>
+            </div>
+            <hr>
+            <div id="cat-sum-table" class="grid grid-cols-2">
+                {% for categorical_sum in categorical_sums %}
+                <div class="flex flex-wrap px-20 py-5">
+                    <span>{{categorical_sum.category}}</span>
+                </div>
+                <div class="flex flex-wrap py-5">
+                    <span class="font-bold text-green-600">₹ {{categorical_sum.sum | intcomma}}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="flex">
+        <div class="shadow-lg m-10 w-1/2 rounded-lg hover:shadow-2xl">
+            <h3 class="mx-10 my-5 font-bold">Daily Expenses</h3>
+            <hr>
+            <canvas id="30DaysChart"></canvas>
+        </div>
+        <div class="shadow-lg m-10 w-1/2 rounded-lg hover:shadow-2xl">
+            <h3 class="mx-10 my-5 font-bold">Expenses across Categories</h3>
+            <hr>
+            <canvas id="categoriesChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    const cats = []
+    const values = []
+    const catSumDivs = document.getElementById('cat-sum-table').getElementsByTagName('div')
+    for (let i=0; i<catSumDivs.length;i++){
+        if (i%2==0){
+            cats.push(catSumDivs[i].innerText)
+        } else {
+            values.push(parseInt(catSumDivs[i].innerText.replace(',','').slice(1)))
+        }
+    }
+    
+    const ctx = document.getElementById('categoriesChart');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: cats,
+            datasets: [{
+                label: 'Amount',
+                data: values,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    
+    const dates = []
+    const dailySums = []
+    const dailySumDivs = document.getElementById('30-days-table').getElementsByTagName('div')
+    for (let i=0; i<dailySumDivs.length;i++){
+        if (i%2==0){
+            dates.push(dailySumDivs[i].innerText)
+        } else {
+            dailySums.push(parseInt(dailySumDivs[i].innerText.replace(',','').slice(1)))
+        }
+    }
+    const chart30Days = document.getElementById('30DaysChart');
+    new Chart(chart30Days, {
+        type: 'line',
+        data: {
+            labels: dates.reverse(),
+            datasets: [{
+                label: 'Sum of Daily Expenses',
+                data: dailySums.reverse(),
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 
 {% endblock content %}

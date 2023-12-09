@@ -6,11 +6,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{% static "expenses/style.css" %}">
     {% block css_files %}{% endblock css_files %}
     <title>{% block page_title %}Money - Spend Wisely{% endblock page_title %}</title>
 </head>
 <body>
+    <nav class="shadow-lg px-4 py-2">
+        <div class="container flex justify-between items-center mx-auto">
+            <a href="" class="flex pr-1">
+                <img src="{% static 'expenses/images/wallet.png' %}" alt="">
+                <div class="flex items-center">
+                    <span>
+                        <div class="font-bold">EXPENSE</div>
+                        <div class="font-bold -mt-3">TRACKER</div>
+                    </span>
+                </div>
+            </a>
+        </div>
+    </nav>
     {% block content %}{% endblock content %}
 </body>
     {% block scripts %}{% endblock scripts %}

@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date
+from django.db.models import Sum
 
 # Create your models here.
 class Expense(models.Model):
@@ -9,8 +11,8 @@ class Expense(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='expenses')
 
+    class Meta:
+        ordering = ['-date']
+
     def __str__(self):
         return self.name
-
-    def get_total_price(self):
-        return self.quantity * self.price
